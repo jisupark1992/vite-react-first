@@ -3,7 +3,7 @@ import './App.css'
 import PackingList from './components/PackingList'
 import BasicButton from "./components/BasicButton.jsx";
 import UseRefHookDemo from "./components/UseRefHookDemo.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function App() {
     const buttonClicked = () => {
@@ -17,6 +17,34 @@ export default function App() {
         {title: '저녁 미팅', completed: false},
         {title: '집 청소하기', completed: true},
     ]);
+
+    const [todos2, setTodos2] = useState([
+        {
+            "id": 1,
+            "title": "delectus aut autem",
+            "completed": false
+        },
+        {
+            "id": 2,
+            "title": "quis ut nam facilis et officia qui",
+            "completed": false
+        },
+        {
+            "id": 3,
+            "title": "fugiat veniam minus",
+            "completed": false
+        },
+    ]);
+
+    useEffect(() => {
+        fetchTodosFromServer();
+    }, []);
+
+    async function fetchTodosFromServer() {
+        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+        const json = await res.json();
+        setTodos2(json);
+    }
 
     const onTodoType = e => {
         setText(e.target.value);
@@ -36,6 +64,12 @@ export default function App() {
     const decrease = () => {
         setCount(count - 1);
     }
+
+    const onTodoDataFetch = async () => {
+        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+        const json = await res.json();
+        setTodos2(json);
+    };
 
   return (
       <>
@@ -65,6 +99,16 @@ export default function App() {
                   todos.map(todo => <li>{todo.title} - {todo.completed ? '완료' : '진행중'}</li>)
               }
           </ul>
+          <hr/>
+          <p>데이터 fetching과 useEffect 훅</p>
+          <button onClick={onTodoDataFetch}>서버에서 데이터 가져오기</button>
+          <p>할일 목록</p>
+          <ul>
+              {
+                  todos2.map(todo => <li>{todo.title} - {todo.completed ? '완료' : '진행중'}</li>)
+              }
+          </ul>
+
       </>
   )
 }
