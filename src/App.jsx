@@ -18,33 +18,29 @@ export default function App() {
         {title: '집 청소하기', completed: true},
     ]);
 
-    const [todos2, setTodos2] = useState([
-        {
-            "id": 1,
-            "title": "delectus aut autem",
-            "completed": false
-        },
-        {
-            "id": 2,
-            "title": "quis ut nam facilis et officia qui",
-            "completed": false
-        },
-        {
-            "id": 3,
-            "title": "fugiat veniam minus",
-            "completed": false
-        },
-    ]);
+    const [city, setCity] = useState('');
+    const [weather, setWeather] = useState();
 
     useEffect(() => {
-        fetchTodosFromServer();
+        fetchWeatherFromServer();
+        console.log(weather);
     }, []);
 
-    async function fetchTodosFromServer() {
-        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+    async function fetchWeatherFromServer() {
+        const res = await fetch('https://api.openweathermap.org/data/2.5/weather?q=London&appid=83b91fc02bac19e6ab422e894bce7c99');
         const json = await res.json();
-        setTodos2(json);
+        setWeather(json);
     }
+
+    const selectWeather = async () => {
+        const res = await fetch('https://api.openweathermap.org/data/2.5/weather?q='+ city + '&appid=83b91fc02bac19e6ab422e894bce7c99');
+        const json = await res.json();
+        setWeather(json);
+        console.log(weather);
+    };
+    const onCity = e => {
+        setCity(e.target.value);
+    };
 
     const onTodoType = e => {
         setText(e.target.value);
@@ -64,12 +60,6 @@ export default function App() {
     const decrease = () => {
         setCount(count - 1);
     }
-
-    const onTodoDataFetch = async () => {
-        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
-        const json = await res.json();
-        setTodos2(json);
-    };
 
   return (
       <>
@@ -100,15 +90,9 @@ export default function App() {
               }
           </ul>
           <hr/>
-          <p>데이터 fetching과 useEffect 훅</p>
-          <button onClick={onTodoDataFetch}>서버에서 데이터 가져오기</button>
-          <p>할일 목록</p>
-          <ul>
-              {
-                  todos2.map(todo => <li>{todo.title} - {todo.completed ? '완료' : '진행중'}</li>)
-              }
-          </ul>
-
+          <h3>날씨 버튼</h3>
+          <input type="text" value={city} onChange={onCity}/>
+          <button onClick={selectWeather}>날씨 콘솔 출력</button>
       </>
   )
 }
